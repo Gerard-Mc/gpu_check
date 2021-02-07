@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-      <h3 class="light-blue-text text-darken-4 center-align">All Tasks</h3>
+    <h3 class="light-blue-text text-darken-4 center-align">Game Search</h3>
 
     <div class="row card-panel grey lighten-5">
         <form action="{{ url_for('search') }}" method="post" class="col s12">
@@ -9,10 +9,10 @@
                 <div class="input-field col s12 m8">
                     <i class="fas fa-search prefix light-blue-text text-darken-4"></i>
                     <input type="text" name="query" id="query" minlength="3" class="validate" required>
-                    <label for="query">Search Tasks</label>
+                    <label for="query">Search Games</label>
                 </div>
                 <div class="col s12 m4">
-                    <a href="{{ url_for('get_tasks') }}" class="red btn text-shadow">Reset</a>
+                    <a href="{{ url_for('search') }}" class="red btn text-shadow">Reset</a>
                     <button type="submit" class="light-blue darken-1 btn text-shadow">
                         <i class="fas fa-search left"></i> Search
                     </button>
@@ -21,17 +21,19 @@
         </form>
     </div>
 
-    {% if tasks|length > 0 %}
- 
-            <div class="collapsible-body">
-                <strong>{{ game.name }}</strong>
-            </div>
-       
+   
+    <ul >
+        {% for x in game %}
+        <li>
+         
+                <strong>{{ x.name }}</strong>
+           
+        </li>
         {% endfor %}
     </ul>
-    {% else %}
-        <h3 class="red-text text-darken-4 center-align">No Results Found</h3>
-    {% endif %}
 
+    
+      
+   
 
 {% endblock %}

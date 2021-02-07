@@ -20,10 +20,15 @@ mongo = PyMongo(app)
 
 
 @app.route("/")
-@app.route("/get_cpu")
-def get_cpu():
-    cpu = mongo.db.cpu.find()
-    return render_template("cpu.html", cpu=cpu)
+@app.route("/game")
+def game():
+    return render_template("game.html" )
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    query = request.form.get("query")
+    game = list(mongo.db.game.find({"$text": {"$search": query}}))
+    return render_template("game.html", game=game)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -47,9 +52,6 @@ def register():
 
     return render_template("register.html")
 
-@app.route("/search", methods=["GET", "POST"])
-def search():
-    return render_template("search.html")
 
 if __name__ == "__main__":
     app.run(host=os.environ.get("IP"),
