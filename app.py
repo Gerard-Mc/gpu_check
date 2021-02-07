@@ -27,7 +27,7 @@ def get_cpu():
 
 
 @app.route("/register", methods=["GET", "POST"])
-def search():
+def register():
     if request.method == "POST":
         # check if username already exists in db
         game_cpu_combo = request.form.get("name") + "_" + request.form.get("cpuName")
@@ -47,11 +47,9 @@ def search():
 
     return render_template("register.html")
 
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    return render_template("register.html")
-
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    return render_template("search.html")
 
 if __name__ == "__main__":
     app.run(host=os.environ.get("IP"),
