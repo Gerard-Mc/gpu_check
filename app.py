@@ -1,4 +1,7 @@
 import os
+import requests
+import json
+from bs4 import BeautifulSoup
 from flask import (
     Flask, flash, render_template,
     redirect, request, session, url_for)
@@ -24,12 +27,23 @@ mongo = PyMongo(app)
 def game():
     return render_template("game.html" )
 
+
 @app.route("/search", methods=["GET", "POST"])
 def search():
     query = request.form.get("query")
-    game = list(mongo.db.game.find({"$text": {"$search": query}}))
+    game = list(mongo.db.game.find({"$text": {"$search": "\"" + query + "\""}}))
     return render_template("game.html", game=game)
 
+
+@app.route("/search_steam", methods=["GET", "POST"])
+def search_steam():
+    with open("/workspace/cpu_check/templates/game.html", 'r') as x:
+        soup = BeautifulSoup(x, "html.parser")
+        game = soup.find("button", class_="game_choice")
+        game_id = game.get('data-id')
+        return render_template("cpu.html", game_id=game_id)
+   
+    
 
 @app.route("/benchmark", methods=["GET", "POST"])
 def benchmark():
