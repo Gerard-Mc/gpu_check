@@ -31,8 +31,8 @@ def search():
     return render_template("game.html", game=game)
 
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
+@app.route("/benchmark", methods=["GET", "POST"])
+def benchmark():
     if request.method == "POST":
         # check if username already exists in db
         game_cpu_combo = request.form.get("name") + "_" + request.form.get("cpuName")
@@ -42,15 +42,15 @@ def register():
 
         if existing_combo:
             flash("combo found")
-            return redirect(url_for("register"))
+            return redirect(url_for("benchmark"))
 
 
-        register = {
+        cpu_game_combo = {
             "match_game": request.form.get("name") + "_" + request.form.get("cpuName")
         }
-        mongo.db.match_game.insert_one(register)
+        mongo.db.match_game.insert_one(cpu_game_combo )
 
-    return render_template("register.html")
+    return render_template("benchmark.html")
 
 
 if __name__ == "__main__":
