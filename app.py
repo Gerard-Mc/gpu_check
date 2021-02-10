@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-from bs4 import BeautifulSoup
+from re import search
 from flask import (
     Flask, flash, render_template,
     redirect, request, session, url_for)
@@ -31,10 +31,18 @@ def game():
 @app.route("/search", methods=["GET", "POST"])
 def search():
     query = request.form.get("query")
-    game = list( ({"$text": {"$search": "\"" + query + "\""}}))
+    game = list(mongo.db.game.find({"$text": {"$search": "\"" + query + "\""}}))
     return render_template("game.html", game=game)
 
-   
+
+@app.route("/search1", methods=["GET", "POST"])
+def search1():
+    query = request.form.get("query")
+    game = list(mongo.db.cpu.find({"$text": {"$search": "\"" + query + "\""}}))
+    return render_template("game.html", game=game)
+
+
+
 @app.route('/submit', methods=["GET", "POST"])
 def submit():
     game_id = format(request.form['text'])
