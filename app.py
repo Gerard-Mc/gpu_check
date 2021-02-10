@@ -31,19 +31,17 @@ def game():
 @app.route("/search", methods=["GET", "POST"])
 def search():
     query = request.form.get("query")
-    game = list(mongo.db.game.find({"$text": {"$search": "\"" + query + "\""}}))
+    game = list( ({"$text": {"$search": "\"" + query + "\""}}))
     return render_template("game.html", game=game)
 
-
-@app.route("/search_steam", methods=["GET", "POST"])
-def search_steam():
-    with open("/workspace/cpu_check/templates/game.html", 'r') as x:
-        soup = BeautifulSoup(x, "html.parser")
-        game = soup.find("button", class_="game_choice")
-        game_id = game.get('data-id')
-        return render_template("cpu.html", game_id=game_id)
    
-    
+@app.route('/submit', methods=["GET", "POST"])
+def submit():
+    game_id = format(request.form['text'])
+    r = requests.get("https://store.steampowered.com/api/appdetails?appids=" + game_id + "")
+    game=json.loads(r.text)[ game_id ]['data']['pc_requirements']['minimum']
+    return render_template("cpu.html", game=game)
+
 
 @app.route("/benchmark", methods=["GET", "POST"])
 def benchmark():
