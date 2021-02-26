@@ -35,5 +35,5 @@ This was put in place of the steam variable in app_2.py and all the different gp
 
 * User having a list of games compatible with their gpu
 
-* Heroku is crashing so it'll have to go on gitpages
+* Heroku is crashing so to use the app, gitpod or another IDE will have to be used
 
