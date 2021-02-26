@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    <br>
+    <h1>Search</h1>
+    <h5>Can your GPU handle it?</h5>
+    <p>Search for your GPU and chosen game in the fields below</p>
+
+        <div>
+        <p>Game: <strong><span id="show_game"></span></strong></p>
+        <p>GPU: <strong><span id="show_gpu"></span></strong></p>
+    </div>
+    
+        <form action="{{ url_for('search') }}" method="post">
+                    <input placeholder="Game"  type="text" name="query" id="query" minlength="3" class="validate" required>
+                    <button class="search-button" type="submit"> Search Game</button>
+        </form>
+     <form action="{{ url_for('search_gpu') }}" method="post" >
+            <input placeholder="GPU"  type="text-gpu" name="query-gpu" id="query-gpu" minlength="3" class="validate" required>
+                     <button class="search-button" id="gpu_select_button" type="submit">Search GPU</button>
+        </form>
+        <p class="reset" onclick="reset()">Reset</p>
+
+    <form id="form1">
+        {% for x in game_list %}
+        <input class="radio-button" type="radio"  onclick="display_game_choice(this.id, this.dataset.id)"   name="game_choice" id="{{ x.name }}" data-id="{{ x.appid }}">
+        <textarea style="display: none" class="hidden-text" name="text-game">{{ x.appid }}</textarea>
+        <textarea style="display: none" class="hidden-text" name="text-game-name">{{ x.name }}</textarea>
+        <label class="radio-label" for="game_choice">{{ x.name }}</label>
+        <hr>
+       
+        {% endfor %}
+
+        {% for x in gpu %}
+        <input class="radio-button" type="radio"  onclick="display_gpu_choice(this.id, this.dataset.id)" name="game_choice" id="{{ x.model }}" data-id="{{ x.rating}}">
+        <textarea style="display: none" class="hidden-text" name="text-gpu-rating">{{ x.rating }}</textarea>
+        <textarea style="display: none" class="hidden-text" name="text-gpu-model">{{ x.model }}</textarea>
+        <label class="radio-label"  for="game_choice">{{ x.model }}</label>
+        <hr>
+       
+        {% endfor %}
+    </form>
+
+    <form id="submit_to_python" method="post"  action="{{ url_for('submit') }}">
+        <textarea id="a" style="display: none"  name="text-game"></textarea>
+        <textarea id="a1" style="display: none"  name="text-game-name"></textarea>
+        <textarea id="b" style="display: none"  name="text-gpu"></textarea>
+        <textarea id="c" style="display: none"  name="text-gpu-model"></textarea>
+        <button  class="submit-button" id="submit_to_python_button" for="form1" type="submit">Submit
+        </button>
+        
+    </form>
+
+ 
+</section>
+
+
+<script>
+    function reset() {
+        sessionStorage.setItem('name', 'Not selected');
+        sessionStorage.setItem('gpu', 'Not selected');
+
+        document.getElementById("show_game").innerHTML = sessionStorage.getItem('name');
+        document.getElementById('show_gpu').innerHTML = sessionStorage.getItem('gpu');
+        document.getElementById("form1").style.display = "none";
+        
+        document.getElementById("a").innerHTML = "";
+        document.getElementById("a1").innerHTML = "";
+        document.getElementById("b").innerHTML = "";
+        document.getElementById("c").innerHTML = "";
+     }
+
+
+    function display_game_choice(id, data_id) {
+        // set game name
+        var game = id;
+        sessionStorage.setItem('name', game);
+        // set game id
+        var appid =  data_id ;
+        sessionStorage.setItem('appid', appid);
+        // hide box
+        document.getElementById("form1").style.display = "none";
+        // set inner html text area 
+        var game_choice = sessionStorage.getItem('appid');
+        document.getElementById("a").innerHTML = data_id;
+        document.getElementById("a1").innerHTML = id;
+        document.getElementById('show_game').innerHTML = sessionStorage.getItem('name');
+
+    }
+       
+        document.getElementById('show_game').innerHTML = sessionStorage.getItem('name');
+        document.getElementById("show_gpu").innerHTML = sessionStorage.getItem('gpu');
+        document.getElementById("a").innerHTML = sessionStorage.getItem('appid');
+        document.getElementById("a1").innerHTML = sessionStorage.getItem('name');
+        document.getElementById("b").innerHTML = sessionStorage.getItem('rating');
+        document.getElementById("c").innerHTML = sessionStorage.getItem('gpu');
+        
+    
+
+    function display_gpu_choice(id, data_id) {
+        // set gpu name
+        var model = id;
+        sessionStorage.setItem('gpu', model);
+        // set gpu rating
+        var rating =  data_id ;
+        sessionStorage.setItem('rating', rating);
+        // hide box
+        document.getElementById("form1").style.display = "none";
+        // set inner html text area 
+        var gpu_choice = sessionStorage.getItem('rating');
+        var gpu_model= sessionStorage.getItem('gpu');
+        document.getElementById("b").innerHTML = gpu_choice;
+        document.getElementById("c").innerHTML = gpu_model;
+        
+        
+        // display gpu choice
+        document.getElementById("show_gpu").innerHTML = sessionStorage.getItem('gpu');
+    }
+
+    
+    
+</script>
+{% endblock %}

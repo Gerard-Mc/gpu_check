@@ -1,0 +1,96 @@
+
+         
+
+
+    # Find Regular all Nvidia gpus from above 9000 series exept for titan series
+    # eg.  'Geforce GT 740', 'Geforce RTX 2050 ti (notebook)', 'Geforce GTX 2090 ti mobile', 'Geforce RTX 2080 ti boost', 'Geforce RTX 2070', 'Geforce GTS 160', 'Geforce GTX 560 SE', 'Geforce MX110', 'Geforce M120', 'Geforce GTX 850', 'Geforce GT 520', 'Geforce RTX 2070 Max-Q', 'Geforce MX45', 'Geforce gtx 5000 ti', 'Geforce gt 300 super', 'Geforce GT 256'
+    find_newer_gtx_gpu =re.findall('(?i)\s(?:gtx\s|gt\s|rtx\s|gts\s|mx|m)\d+[a-zA-Z]?\s?\d+?\s?(?:GB|ti\sboost|ti\s\(?notebook\)?|ti|le|max-q|super\smax-q|se|super|\d+m|\(?mobile\)?|\(?notebook\)?)', gpu_requirements)
+    for i in find_newer_gtx_gpu:
+            remove = i
+            gpu_requirements = re.sub(remove,  "", gpu_requirements)
+            deleted.append(remove)
+            i = re.sub("^\s",  "Nvidia Geforce ", i)
+            i = re.sub("\s\s$",  "", i)
+            i = re.sub("\s$",  "", i)
+            i = re.sub("  ",  " ", i)
+            newer_gtx_gpu.append(i)
+            
+
+    # find all Nvidia titan gpus in user gpu database 
+    # eg "NVIDIA Titan Xp Collector's Edition", 'NVIDIA Titan Xp', 'NVIDIA Titan X (Pascal)', 'NVIDIA GTX TITAN X', 'NVIDIA GTX Titan Black', 'NVIDIA Titan RTX', 'NVIDIA Titan V', 'nvidia titan x'
+    find_nvidia_titan =re.findall('(?i)\s(?:geforce\sgtx\stitan|nvidia\sgtx\stitan|nvidia\stitan|titan)\s(?:rtx|gtx|X\s\(?Pascal\)?|Xp\sCollector\'s\sEdition|xp|x|V|5|black)', gpu_requirements)
+    for i in find_nvidia_titan:
+            remove = i
+            gpu_requirements = re.sub(remove,  "", gpu_requirements)
+            deleted.append(remove)
+            i = re.sub("Geforce",  "", i)
+            i = re.sub("^\s",  "", i)
+            i = re.sub("\s\s$",  "", i)
+            i = re.sub("\s$",  "", i)
+            i = re.sub("  ",  " ", i)
+            nvidia_titan.append(i)
+           
+
+    #Find mobile Amd gpus that are less powerful than all gpus on user gpu list
+    find_old_amd_mobile_gpu = re.findall("(?i)(?:mobility\sradeon|mobility)\sh?d?\s?x?(?:[1-3][0-9]\d+|4[0-5]\d+)", gpu_requirements)
+    for i in find_old_amd_mobile_gpu:
+            remove = i
+            gpu_requirements = re.sub(remove,  "", gpu_requirements)
+            deleted.append(remove)
+            i = re.sub("(?i)nvidia\sgeforce",  "", i)
+            i = re.sub("(?i)nvidia",  "", i)
+            i = re.sub("(?i)geforce\s",  " ", i)
+            i = re.sub("^\s",  "Nvidia GeForce ", i)
+            i = re.sub("\s\s$",  "", i)
+            i = re.sub("\s$",  "", i)
+            i = re.sub("  ",  " ", i)
+            old_amd_mobile_gpu.append(i) 
+
+
+    # Remove more powerful ones because they are not on the users gpu database and cause confliction with old_amd_gpu regex
+    find_old_amd_mobile_gpu = re.findall("(?i)(?:mobility\sradeon|mobility)\sh?d?\s?x?|5\d+", gpu_requirements)
+    for i in find_old_amd_mobile_gpu:
+            remove = i
+            gpu_requirements = re.sub(remove,  "", gpu_requirements)
+            deleted.append(remove)
+            i = re.sub("(?i)nvidia\sgeforce",  "", i)
+            i = re.sub("(?i)nvidia",  "", i)
+            i = re.sub("(?i)geforce\s",  " ", i)
+            i = re.sub("^\s",  "Nvidia GeForce ", i)
+            i = re.sub("\s\s$",  "", i)
+            i = re.sub("\s$",  "", i)
+            i = re.sub("  ",  " ", i)
+            
+
+
+    #Find old AMD gpus.
+    #Radeon 7000, 8000, 9000, x1000, x2000, x300, x500, x600, x700, x800, x1000, x1200, 2100, hd 2000, hd 3000, hd 4000, hd 5000, hd 6000 series
+    find_old_amd_gpu = re.findall("(?i)(?:radeon|ati|amd)\s(?:ve|le|sdr|ddr|7500|3[2-4]0|8500|9[0-5][0-2]0|9\d+|x\d+|xpress|hd\s2\d+|hd\s3\d+|hd\s4\d+|hd\s5\d+|hd\s6[5-6]\d+)", gpu_requirements)
+    for i in find_old_amd_gpu:
+        old_amd_gpu.append(i)
+        remove = i
+        deleted.append(remove)
+        gpu_requirements = re.sub(remove,  "", gpu_requirements)
+
+    #Find new AMD gpus.
+    #Radeon hd 7000, hd 8000, R5, R7, RX 500, RX Vega, RX 5000, RX 6000, Mobility
+    find_new_amd_gpu = re.findall("(?i)((?:|ati\sradeon|mobility\sradeon|radeon|amd)\s?(?:\d+|x\d+|hd|r[5-9]\sfury|r[5-9]\s[a-zA-Z]?\s?\d+?[a-zA-Z]?|VII|rx|pro\sduo)\s(?:\d+|nano|pro\sduo|m$|vega|xt)?\s?(?:\d+|d$|e$|x2$|xt?|m$|g$|(?:v$|v\s))?\s?(?:xt|gb|x|liquid)?)", gpu_requirements)
+    for i in find_new_amd_gpu:
+        new_amd_gpu.append(i)
+        remove = i
+        deleted.append(remove)
+        gpu_requirements = re.sub(remove,  "", gpu_requirements)
+
+
+
+
+#Find old AMD gpus.
+    #Radeon 7000, 8000, 9000, x1000, x2000, x300, x500, x600, x700, x800, x1000, x1200, 2100, hd 2000, hd 3000, hd 4000, hd 5000, hd 6000 series
+    find_old_amd_gpu = re.findall("(?i)(?:radeon|ati|amd)\s(?:ve|le|sdr|ddr|7500|3[2-4]0|8500|9[0-5][0-2]0|9\d+|x\d+|xpress|hd\s2\d+|hd\s3\d+|hd\s4\d+|hd\s5\d+|hd\s6[5-6]\d+)[a-zA-z]*", gpu_requirements)
+    for i in find_old_amd_gpu:
+        old_amd_gpu.append(i)
+        remove=i
+        deleted.append(remove)
+        gpu_requirements = re.sub(remove,  "", gpu_requirements)
+
+            #steam = "512mb vram +32mb+ vram 128mb graphics card+256 mb video card Graphics 32mb 4 MB Video Card 256MB graphics card 256MB graphics card intel hd 3000 intel hd 4000 intel uhd 620 geforce 750gtx geforce 630gt nvidia 200gt Mobility Radeon HD 4250 Mobility Radeon HD 2400 XT Mobility Radeon X2300 GeForce MX110 GeForce MX45 Nvidia GeForce 7800 GT Nvidia GeForce 7800 GTx Nvidia GeForce 6666 GT Nvidia GeForce 6666 GTx NVIDIA 9990 GT GeForce3 Ti200 GeForce 256 GeForce4 Ti4200 GeForce FX GeForce 6800 GT GeForce 7800 GTX GeForce 7300 SE GeForce 8800 Ultra GeForce 9400 mGPU gtx 1070 M270X GT Radeon GT M470 NVIDIA Titan RTX  Ti GTX 640 nvidia GT 740 nvidia GT 640m RTX 2050 ti (notebook) GTX 2090 ti notebook RTX 2080 ti boost RTX 2070 notebook RTX 2010 (notebook) RTX 2070 ti boost Max GTS 160M GTS 250 GTX 560 SE M120 GTX 850M GT 520MX RTX 2070 Max-Q gtx 5000 ti gt 300 super MB MX 8 RTX 2070 Super Max-Q GT 120 GT 140 NVIDIA Titan Xp Collector's Edition NVIDIA Titan Xp NVIDIA Titan X (Pascal) nvidia titan x Radeon X1050 AGP Radeon X300 LE Radeon X300 SE Radeon X600 SE Radeon X600 Pro Radeon X600 XT Radeon X800 Pro Radeon X800 XL Radeon X800 GTO Radeon x800 xt Radeon 8500 LE Radeon 9000 Pro Radeon 9250 SE Radeon 9600 Pro Radeon 9600 XT Radeon 9800 XL Radeon 9800 XXL Radeon Xpress X200 Radeon Xpress 1100 Radeon HD 2350 Radeon HD 2400 PRO Radeon HD 2400 XT Radeon HD 2600 PRO Radeon HD 2900 Radeon HD 3450 Radeon HD 3850 X2 Radeon hd 2350 Radeon hd 2900 Radeon hd 3400 Radeon X1900 256 Radeon RX 5500M Radeon RX 540 Radeon RX 540d Radeon RX Vega Radeon RX Vega Radeon RX 5500 Radeon RX 5300 Radeon RX 5300M Radeon RX 560X Radeon RX 6800 Radeon RX 6900 Radeon RX Vega Radeon RX Vega Radeon RX 550X Radeon RX 470D Radeon HD 7690M XT Radeon HD 6630M Radeon HD 6380G Radeon HD 4350 Radeon HD 5850 Radeon HD 6970 Radeon HD 6370D Radeon R9 295X2 Radeon R7 250E Radeon R5 235X Radeon R7 250 Radeon HD 7560D Radeon HD 4870 X2 Radeon HD 7870 XT Radeon HD 7950 Boost Radeon R9 Fury Radeon R9 Fury x Radeon R9 nano Radeon R9 pro duo Radeon VII xt Radeon HD 8850M Radeon HD 7520G Radeon HD 7770M Radeon Radeon HD 550v X Radeon R9 380X Radeon R9 Fury X Radeon HD 8570 Radeon hd 4300 Radeon hd 4250 Radeon hd 5400 Radeon hd 6750 Radeon hd 6600 Radeon hd"    
